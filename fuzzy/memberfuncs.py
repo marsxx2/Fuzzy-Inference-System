@@ -24,7 +24,9 @@ class MemberFunc:
 
 class Triangular(MemberFunc):
     def __init__(self, lbase: float, center: float, rbase: float):
-        self._lbase, self._center, self._rbase = lbase, center, rbase
+        self._lbase: float = lbase
+        self._center: float = center
+        self._rbase: float = rbase
 
     def __str__(self):
         return f'{self.__class__.__name__}({self._lbase}, {self._center}, {self._rbase})'
@@ -60,16 +62,18 @@ class Trapezoidal(MemberFunc):
 
     def __init__(self, lbase = None, lhead = None, rhead = None, rbase = None):
         if lbase != None and lhead != None and rhead != None and rbase != None:
-            self._lbase, self._lhead, self._rhead, self._rbase = lbase, lhead, rhead, rbase
             self._shape = self._Shape.close
         elif lbase != None and lhead != None and rhead == None and rbase == None:
-            self._lbase, self._lhead = lbase, lhead
             self._shape = self._Shape.OpenRight
         elif lbase == None and lhead == None and rhead != None and rbase != None:
-            self._rhead, self._rbase = rhead, rbase
             self._shape = self._Shape.OpenLeft
         else:
             raise ValueError("Please set all arguments or 'lbase' and 'lhead' together or 'rhead' and 'rbase' together")
+        
+        self._lbase: float = lbase
+        self._lhead: float = lhead
+        self._rhead: float = rhead
+        self._rbase: float = rbase
 
     def __str__(self):
         if self._shape == self._Shape.close:
@@ -141,7 +145,8 @@ class Trapezoidal(MemberFunc):
 
 class Gaussian(MemberFunc):
     def __init__(self, center: float, sigma: float):
-        self._center, self._sigma = center, sigma
+        self._center: float = center
+        self._sigma: float = sigma
 
     def __str__(self):
         return f'{self.__class__.__name__}({self._center}, {self._sigma})'
@@ -163,9 +168,9 @@ class Gaussian(MemberFunc):
 
 class Bell(MemberFunc):
     def __init__(self, center: float, width: float, slope: float):
-        self._center = center
-        self._a = width / 2
-        self._b = 2 * slope * self._a
+        self._center: float = center
+        self._a: float = width / 2
+        self._b: float = 2 * slope * self._a
 
     def __str__(self):
         return f'{self.__class__.__name__}({self._center}, {self._a * 2}, {self._b / (2 * self._a)})'
@@ -211,7 +216,8 @@ class Bell(MemberFunc):
 
 class Sigmoidal(MemberFunc):
     def __init__(self, a: float, c: float):
-        self._a, self._c = a, c
+        self._a: float = a
+        self._c: float = c
 
     def __call__(self, value: float) -> grade:
         return 1 / (1 + math.exp(-self._a * (value - self._c)))
