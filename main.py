@@ -1,10 +1,12 @@
 from fuzzy.datatype import grade
-import fuzzy.memberfuncs as mfs
+import fuzzy.input_space.memberfuncs as mfs
 from matplotlib import pyplot as plt
 import numpy as np
-import fuzzy.discourse
+from fuzzy.input_space import discourse
+from fuzzy.inference import antecedent
+from fuzzy.inference import consequent
 
-disX1=fuzzy.discourse.Discourse(
+disX1=discourse.Discourse(
     mfs.Trapezoidal(rhead=-5, rbase=-3.333),
     mfs.Triangular(-5, -3.333, -1.666),
     mfs.Triangular(-3.333, -1.666, 0),
@@ -14,7 +16,7 @@ disX1=fuzzy.discourse.Discourse(
     mfs.Trapezoidal(3.333, 5)
 )
 
-disX2=fuzzy.discourse.Discourse(
+disX2=discourse.Discourse(
     mfs.Trapezoidal(rhead=-5, rbase=-3.333),
     mfs.Triangular(-5, -3.333, -1.666),
     mfs.Triangular(-3.333, -1.666, 0),
@@ -24,9 +26,9 @@ disX2=fuzzy.discourse.Discourse(
     mfs.Trapezoidal(3.333, 5)
 )
 
-dmnInput=fuzzy.discourse.Domain(disX1, disX2)
+dmnInput=discourse.Domain(disX1, disX2)
 
-disOutput=fuzzy.discourse.Discourse(
+disOutput=discourse.Discourse(
     mfs.Trapezoidal(rhead=0, rbase=8.333),
     mfs.Triangular(0, 8.333, 16.666),
     mfs.Triangular(8.333, 16.666, 25),
@@ -35,6 +37,10 @@ disOutput=fuzzy.discourse.Discourse(
     mfs.Triangular(33.333, 41.666, 50),
     mfs.Trapezoidal(41.666, 50)
 )
+
+f=consequent.Sugeno(2)
+f.gradient_descent(0.1, 0.5, 0.1)
+print(f())
 
 # inputs=[np.linspace(-7, 7, 1000), np.linspace(-7, 7, 1000), np.linspace(-10, 60, 1000)]
 # outputs=[np.array([dis(x) for x in input]).T for dis, input in zip(dmnInput, inputs)]

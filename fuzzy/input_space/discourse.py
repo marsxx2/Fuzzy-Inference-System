@@ -1,4 +1,4 @@
-import fuzzy.memberfuncs as mfs
+import fuzzy.input_space.memberfuncs as mfs
 from fuzzy.datatype import grade
 from concurrent.futures import ThreadPoolExecutor
 
@@ -17,15 +17,15 @@ class Discourse:
                 self._repr_str = f'{self.__class__.__name__}({args[0]})'
             elif isinstance(args[0], list):
                 if not all(isinstance(itm, mfs.MemberFunc) for itm in args[0]):
-                    raise ValueError("All elements in list must be a MemberFunc classes")
+                    raise TypeError("All elements in list must be a MemberFunc classes")
                 self._member_functions = args[0]
                 self._repr_str = f'{self.__class__.__name__}({str(args[0])})'
             else:
-                raise ValueError("Argument must be a non_negative integer or a list of MemberFunc classes")
+                raise TypeError("Argument must be a non_negative integer or a list of MemberFunc classes")
 
         else:
             if not all(isinstance(itm, mfs.MemberFunc) for itm in args):
-                raise ValueError("All arguments must be a MemberFunc classes")
+                raise TypeError("All arguments must be a MemberFunc classes")
             self._member_functions = list(args)
             self._repr_str = f'{self.__class__.__name__}('
             for a in args:
@@ -81,15 +81,15 @@ class Domain:
                 self._repr_str = f'{self.__class__.__name__}({args[0]})'
             elif isinstance(args[0], list):
                 if not all(isinstance(itm, Discourse) for itm in args[0]):
-                    raise ValueError("All elements in list must be a Discourse class")
+                    raise TypeError("All elements in list must be a Discourse class")
                 self._discourses = args[0]
                 self._repr_str = f'{self.__class__.__name__}({str(args[0])})'
             else:
-                raise ValueError("Argument must be a non_negative integer or a list of Discourse classes")
+                raise TypeError("Argument must be a non_negative integer or a list of Discourse classes")
 
         else:
             if not all(isinstance(itm, Discourse) for itm in args):
-                raise ValueError("All arguments must be a Discourse class")
+                raise TypeError("All arguments must be a Discourse class")
             self._discourses = list(args)
             self._repr_str = f'{self.__class__.__name__}('
             for a in args:
@@ -110,14 +110,16 @@ class Domain:
         if argslen == 0:
             raise ValueError(f"You must pass {len(self)} futures to domain")
         elif argslen == 1:
+            if not isinstance(args[0], list):
+                raise TypeError("Argument must be a list of floats or ints")
             if not all(isinstance(val, float) or isinstance(val , int) for val in args[0]):
-                raise ValueError("All elements in list must be a float or int")
+                raise TypeError("All elements in list must be a float or int")
             if len(args[0]) != len(self):
                 raise ValueError(f"You must pass {len(self)} futures to domain but you passed {len(args[0])} futures")
             futures=args[0]
         else:
             if not all(isinstance(val, float) or isinstance(val , int) for val in args):
-                raise ValueError("All arguments must be a float or int")
+                raise TypeError("All arguments must be a float or int")
             if len(args) != len(self):
                 raise ValueError(f"You must pass {len(self)} futures to domain but you passed {len(args)} futures")
             futures=list(args)
@@ -127,7 +129,7 @@ class Domain:
             futures=[executor.submit(dis, value) for dis, value in zip(self._discourses, futures)]
             results=[future.result() for future in futures]
 
-        return list(results)
+        return results
     
     def __getitem__(self, index):
         return self._discourses[index]
