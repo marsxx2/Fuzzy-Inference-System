@@ -128,7 +128,7 @@ class Domain:
         with ThreadPoolExecutor() as executor:
             futures=[executor.submit(dis, value) for dis, value in zip(self._discourses, futures)]
             results=[future.result() for future in futures]
-
+        
         return results
     
     def __getitem__(self, index):

@@ -5,6 +5,9 @@ import numpy as np
 from fuzzy.input_space import discourse
 from fuzzy.inference import antecedent
 from fuzzy.inference import consequent
+from fuzzy.inference import rules
+from fuzzy.inference import aggregator
+
 
 disX1=discourse.Discourse(
     mfs.Trapezoidal(rhead=-5, rbase=-3.333),
@@ -38,9 +41,16 @@ disOutput=discourse.Discourse(
     mfs.Trapezoidal(41.666, 50)
 )
 
-f=consequent.Sugeno(2)
-f.gradient_descent(0.1, 0.5, 0.1)
-print(f())
+rb=rules.RuleBase()
+print(rb)
+rb.append(rules.Rule(antecedent.Min(4, 6), consequent.Mamdani(3)))
+rb.append(rules.Rule(antecedent.Min(3, 1), consequent.Mamdani(0)))
+rb.append(rules.Rule(antecedent.Min(5, 6), consequent.Mamdani(3)))
+rb.append(rules.Rule(antecedent.Min(2, 5), consequent.Mamdani(7)))
+print(rb)
+print(rb(dmnInput(3, 4)))
+agg=aggregator.Max()
+print(agg(rb(dmnInput(3, 4))))
 
 # inputs=[np.linspace(-7, 7, 1000), np.linspace(-7, 7, 1000), np.linspace(-10, 60, 1000)]
 # outputs=[np.array([dis(x) for x in input]).T for dis, input in zip(dmnInput, inputs)]
