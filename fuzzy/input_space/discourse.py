@@ -59,9 +59,23 @@ class Discourse:
     def crossover_points(self):
         return [mf.crossover_point for mf in self._member_functions]
 
-    @property
-    def centroids(self):
-        return [mf.centroid for mf in self._member_functions]
+    def centroids(self, *args):
+        argslen = len(args)
+        if argslen == 0:
+            return [mf.centroid for mf in self._member_functions]
+        elif argslen == 1:
+            if isinstance(args[0], int):
+                return self._member_functions[args[0]].centroid
+            elif isinstance(args[0], list):
+                if not all(isinstance(arg, int) for arg in args[0]):
+                    raise TypeError("All elements of list must be integer")
+                return [self._member_functions[mf_indx].centroid for mf_indx in args[0]]
+            else:
+                raise TypeError("Argument must be integer or a list of integer")
+        else:
+            if not all(isinstance(arg, int) for arg in args):
+                raise TypeError("All arguments must be integer")
+            return [self._member_functions[mf_indx].centroid for mf_indx in args]
     
     def append(self, member_func: mfs.MemberFunc):
         self._member_functions.append(member_func)

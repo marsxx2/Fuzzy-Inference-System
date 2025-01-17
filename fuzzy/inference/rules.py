@@ -17,6 +17,14 @@ class Rule:
     def __call__(self, grades: list[list[grade]]):
         return self._consequent, self._antecedent(grades)
     
+    @property
+    def antecedent(self):
+        return self._antecedent
+    
+    @property
+    def consequent(self):
+        return self._consequent
+    
 
 class RuleBase():
     def __init__(self):

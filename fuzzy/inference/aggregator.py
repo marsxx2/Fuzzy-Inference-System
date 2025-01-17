@@ -3,7 +3,7 @@ from fuzzy.inference.consequent import Consequent
 
 
 class Aggregator:
-    def __call__(self, rules_infer: list[tuple[Consequent, grade]]):
+    def __call__(self, rules_infer: list[tuple[Consequent, grade]]) -> list[tuple[Consequent, grade]]:
         categories: list[Consequent] = []
         grades: list[list[grade]] = []
         for cons, grd in rules_infer:

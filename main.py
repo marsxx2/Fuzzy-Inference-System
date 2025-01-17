@@ -46,11 +46,30 @@ print(rb)
 rb.append(rules.Rule(antecedent.Min(4, 6), consequent.Mamdani(3)))
 rb.append(rules.Rule(antecedent.Min(3, 1), consequent.Mamdani(0)))
 rb.append(rules.Rule(antecedent.Min(5, 6), consequent.Mamdani(3)))
-rb.append(rules.Rule(antecedent.Min(2, 5), consequent.Mamdani(7)))
+rb.append(rules.Rule(antecedent.Min(2, 5), consequent.Mamdani(6)))
 print(rb)
 print(rb(dmnInput(3, 4)))
 agg=aggregator.Max()
-print(agg(rb(dmnInput(3, 4))))
+inferences=agg(rb(dmnInput(3, 4)))
+print(inferences)
+centroids = disOutput.centroids(
+    [itm[0]() for itm in inferences]
+)
+weigths = [float(itm[1]) for itm in inferences]
+print(centroids)
+print(weigths)
+
+class test:
+    def __init__(self, **kwargs):
+        if 'length' in kwargs:
+            print(f'length = {kwargs['length']}')
+        if 'pull' in kwargs:
+            print(f'pull = {kwargs['pull']}')
+        if 'system' in kwargs:
+            print(f'system = {kwargs['system']}')
+        
+
+tst=test()
 
 # inputs=[np.linspace(-7, 7, 1000), np.linspace(-7, 7, 1000), np.linspace(-10, 60, 1000)]
 # outputs=[np.array([dis(x) for x in input]).T for dis, input in zip(dmnInput, inputs)]
