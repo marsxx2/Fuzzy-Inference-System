@@ -26,6 +26,10 @@ class CoA(Defuzzifier):
         )
 
         return numerator / sum(self._weigths)
+    
+    @property
+    def output_discourse(self):
+        return self._output_discourse
         
 
 

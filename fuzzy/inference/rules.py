@@ -14,6 +14,9 @@ class Rule:
     def __repr__(self):
         return f'{self.__class__.__name__}({repr(self._antecedent)}, {repr(self._consequent)})'
     
+    def __eq__(self, other):
+        return self.antecedent == other.antecedent
+    
     def __call__(self, grades: list[list[grade]]):
         return self._consequent, self._antecedent(grades)
     
@@ -39,6 +42,9 @@ class RuleBase():
     def __repr__(self):
         return f'{self.__class__.__name__}()'
     
+    def __len__(self):
+        return len(self._rules)
+    
     def __getitem__(self, index: int):
         return self._rules[index]
     
@@ -48,5 +54,8 @@ class RuleBase():
     def __call__(self, grades: list[list[grade]]) -> list[tuple[Consequent, grade]]:
         return [rule(grades) for rule in self._rules]
     
-    def append(self, rule: Rule):
-        self._rules.append(rule)
+    def append(self, rule: Rule, degree = 0):
+        if rule in self._rules:
+            self._rules[self._rules.index(rule)].consequent.append(rule.consequent(), degree)
+        else:
+            self._rules.append(rule)

@@ -10,7 +10,7 @@ class Antecedent:
             if isinstance(args[0], int):
                 self._fuzzy_set_numbers=[args[0]]
                 self._repr_str= f'({args[0]})'
-            elif isinstance(args[0], list):
+            elif isinstance(args[0], list) or isinstance(args[0], tuple):
                 if not all(isinstance(val , int) for val in args[0]):
                     raise TypeError("All elements in list must be int")
                 self._fuzzy_set_numbers=args[0]
@@ -37,6 +37,9 @@ class Antecedent:
     
     def __repr__(self):
         return f'{self.__class__.__name__}{self._repr_str}'
+    
+    def __eq__(self, other):
+        return self._fuzzy_set_numbers == other._fuzzy_set_numbers
 
     def __call__(self, grades: list[list[grade]]):
         self._antecedent_grades = [
@@ -57,6 +60,9 @@ class Min(Antecedent):
 
     def __repr__(self):
         return f'{self.__class__.__name__}{self._repr_str}'
+    
+    def __eq__(self, other):
+        return super().__eq__(other)
 
     def __call__(self, grades: list[list[grade]]):
         super().__call__(grades)
@@ -75,6 +81,9 @@ class Product(Antecedent):
 
     def __repr__(self):
         return f'{self.__class__.__name__}{self._repr_str}'
+    
+    def __eq__(self, other):
+        return super().__eq__(other)
 
     def __call__(self, grades: list[list[grade]]):
         super().__call__(grades)

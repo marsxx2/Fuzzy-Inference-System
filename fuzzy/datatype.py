@@ -65,3 +65,54 @@ class grade:
 
     def __ne__(self, other):
         return not self.__eq__(other)
+    
+    def __lt__(self, other):
+        return self._value < self.__evaluate(other)
+    
+    def __le__(self, other):
+        return self._value <= self.__evaluate(other)
+    
+    def __gt__(self, other):
+        return self._value > self.__evaluate(other)
+    
+    def __ge__(self, other):
+        return self._value >= self.__evaluate(other)
+    
+
+class DataTable:
+    def __init__(self, inputs = None, output = None):
+        if inputs:
+            self._inputs = inputs
+        else:
+            self._inputs = []
+
+        if output:
+            self._output = output
+        else:
+            self._output = []
+
+    def __getitem__(self, index):
+        return self._inputs[index], self._output[index]
+    
+    def __setitem__(self, index, value):
+        self._inputs[index], self._output[index] = value
+
+    @property
+    def inputs(self):
+        return self._inputs
+    
+    @inputs.setter
+    def inputs(self, value):
+        self._inputs = value
+
+    @property
+    def output(self):
+        return self._output
+    
+    @output.setter
+    def output(self, value):
+        self._output = value
+
+    def append(self, inputs, output):
+        self._inputs.append(inputs)
+        self._output.append(output)

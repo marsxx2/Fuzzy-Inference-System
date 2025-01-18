@@ -5,6 +5,9 @@ class Consequent:
     def __call__(self, *args) -> int | float:
         pass
 
+    def append(self, consequent: int, degree: float):
+        pass
+
 
 class Mamdani(Consequent):
     def __init__(self, consequent = -1):

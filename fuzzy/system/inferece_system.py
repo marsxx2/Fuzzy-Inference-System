@@ -75,12 +75,10 @@ class InferenceSystem:
             raise ValueError("'rulebase' is None")
         if not self._aggregator:
             raise ValueError("'aggregator' is None")
+        if not self._defuzzifier:
+            raise ValueError("'defuzzifier' is None")
         
         input_domain_grades = self._input_domain(*args)
         ruls_inference = self._rulebase(input_domain_grades)
         aggrigated_inferece = self._aggregator(ruls_inference)
-
-        if self._defuzzifier:
-            return self._defuzzifier(aggrigated_inferece, *args)
-        else:
-            return aggrigated_inferece
+        return self._defuzzifier(aggrigated_inferece, *args)
