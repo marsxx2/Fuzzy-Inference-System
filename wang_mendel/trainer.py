@@ -3,7 +3,7 @@ from fuzzy.input_space.discourse import Domain, Discourse
 from fuzzy.inference.antecedent import Antecedent, Min
 from fuzzy.inference.consequent import Mamdani
 from fuzzy.inference.rules import RuleBase, Rule
-
+import math
 
 class Trainer:
     _input_domain: Domain
@@ -74,16 +74,22 @@ class Trainer:
         for inputs, output in self.train_table:
             input_domain_result = self._input_domain(inputs)
             output_discourse_result = self._output_discourse(output)
-            rulebase.append(Rule(
-                self._antecedent([
-                    future_result.index(max(future_result))
-                    if max(future_result) > 0 else -1
-                    for future_result in input_domain_result
-                ]),
-                Mamdani(
-                    output_discourse_result.index(
-                        max(output_discourse_result)
+            degree = math.prod(
+                float(max(future_result))
+                for future_result in input_domain_result
+            ) * float(max(output_discourse_result))
+            rulebase.append(
+                Rule(
+                    self._antecedent([
+                        future_result.index(max(future_result))
+                        for future_result in input_domain_result
+                    ]),
+                    Mamdani(
+                        output_discourse_result.index(
+                            max(output_discourse_result)
+                        )
                     )
-                )
-            ))
+                ),
+                degree
+            )
         return rulebase

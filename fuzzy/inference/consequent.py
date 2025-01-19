@@ -11,7 +11,6 @@ class Consequent:
 
 class Mamdani(Consequent):
     def __init__(self, consequent = -1):
-        self._consequences: list[tuple[int, float]] = []
         self._consequent: int = consequent
 
     def __str__(self):
@@ -21,21 +20,12 @@ class Mamdani(Consequent):
         if self._consequent != -1:
             return f'{self.__class__.__name__}({self._consequent})'
         return f'{self.__class__.__name__}()'
-    
-    def __len__(self):
-        return len(self._consequences)
-
-    def __getitem__(self, index):
-        return self._consequences[index]
-    
-    def __setitem__(self, index, value):
-        self._consequences[index] = value
 
     def __eq__(self, other):
         if isinstance(other, Mamdani):
-            return self.consequent == other.consequent
+            return self._consequent == other._consequent
         elif isinstance(other, int):
-            return self.consequent == other
+            return self._consequent == other
         else:
             raise TypeError("Only can compare with Mamdani class or int")
         
@@ -44,23 +34,6 @@ class Mamdani(Consequent):
 
     def __call__(self, *args):
         return self._consequent
-
-    @property
-    def max_degree(self) -> int:
-        if self._consequences:
-            return max(self._consequences, key=lambda x: x[1])[0]
-        return -1
-    
-    @property
-    def consequent(self) -> int:
-        return self._consequent
-    
-    @consequent.setter
-    def consequent(self, value: int):
-        self._consequent = value
-    
-    def append(self, consequent: int, degree: float):
-        self._consequences.append((consequent, degree))
 
 
 class Sugeno(Consequent):

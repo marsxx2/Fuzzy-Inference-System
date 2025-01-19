@@ -32,6 +32,7 @@ class Rule:
 class RuleBase():
     def __init__(self):
         self._rules: list[Rule] = []
+        self._rules_neighbors: list[list[tuple[Rule, float]]] = []
 
     def __str__(self):
         if self._rules:
@@ -45,17 +46,21 @@ class RuleBase():
     def __len__(self):
         return len(self._rules)
     
-    def __getitem__(self, index: int):
-        return self._rules[index]
+    def __getitem__(self, index):
+        return self._rules[index], self._rules_neighbors[index]
     
-    def __setitem__(self, index: int, value: Rule):
-        self._rules[index] = value
+    def __setitem__(self, index, value):
+        self._rules[index], self._rules_neighbors[index] = value
 
     def __call__(self, grades: list[list[grade]]) -> list[tuple[Consequent, grade]]:
         return [rule(grades) for rule in self._rules]
     
-    def append(self, rule: Rule, degree = 0):
-        if rule in self._rules:
-            self._rules[self._rules.index(rule)].consequent.append(rule.consequent(), degree)
-        else:
-            self._rules.append(rule)
+    def append(self, rule: Rule, degree = 1):
+        if degree > 0:
+            if rule in self._rules:
+                indx = self._rules.index(rule)
+                self._rules_neighbors[indx].append((rule, degree))
+                self._rules[indx] = max(self._rules_neighbors[indx], key=lambda x: x[1])[0]
+            else:
+                self._rules.append(rule)
+                self._rules_neighbors.append([(rule, degree)])

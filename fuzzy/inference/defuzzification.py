@@ -7,6 +7,10 @@ class Defuzzifier:
         self._consequences_output = [itm[0](*args) for itm in inferences]
         self._weigths = [float(itm[1]) for itm in inferences]
         return 0.0
+    
+    @property
+    def output_discourse(self):
+        return None
 
 
 class CoA(Defuzzifier):
