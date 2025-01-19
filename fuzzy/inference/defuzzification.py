@@ -18,7 +18,7 @@ class CoA(Defuzzifier):
         self._output_discourse = output_discourse
 
     def __call__(self, inferences: list[tuple[Consequent, grade]], *args):
-        super.__call__(inferences)
+        super().__call__(inferences)
 
         centroids = self._output_discourse.centroids(
             self._consequences_output

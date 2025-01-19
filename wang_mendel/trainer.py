@@ -58,7 +58,7 @@ class Trainer:
     
     @antecedent.setter
     def antecedent(self, value):
-        if not isinstance(value, Antecedent):
+        if not isinstance(value, type(Antecedent)):
             raise TypeError("'antecedent' must be Antecedent class")
         self._antecedent = value
 

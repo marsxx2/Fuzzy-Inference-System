@@ -38,6 +38,9 @@ class Antecedent:
     def __repr__(self):
         return f'{self.__class__.__name__}{self._repr_str}'
     
+    def __getitem__(self, index):
+        return self._fuzzy_set_numbers[index]
+    
     def __eq__(self, other):
         return self._fuzzy_set_numbers == other._fuzzy_set_numbers
 
