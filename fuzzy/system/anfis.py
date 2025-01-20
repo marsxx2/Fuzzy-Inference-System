@@ -100,7 +100,7 @@ def train(anfis_system: ANFIS, eta, epochs_no, train_table: DataTable, test_tabl
         test_mse_list = [test_mse()[0]]
     for _ in range(epochs_no):
         for inputs, output in train_table:
-            error = output - anfis_system(inputs)
+            error = anfis_system(inputs) - output
             for func, norm_weigth in zip(anfis_system.consequents, anfis_system.normalized_weigths):
                 func.gradient_descent(eta, norm_weigth, error, inputs)
         train_mse_list.append(train_mse()[0])

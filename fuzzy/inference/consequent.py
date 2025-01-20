@@ -97,31 +97,27 @@ class Sugeno(Consequent):
                     inputs = [0 for _ in range(len(self._coefficients) - 2)]
                     inputs.append(args[0])
                 elif len(self._coefficients) == 1:
-                    raise ValueError("Dosen't need any argument")
+                    inputs = []
                 else:
                     inputs = [args[0]]
             elif isinstance(args[0], list):
-                if len(args[0]) > (len(self._coefficients) - 1):
-                    raise ValueError(f"Must pass {len(self._coefficients) - 1} inputs to function")
                 if not all(isinstance(num, int) or isinstance(num, float) for num in args[0]):
                     raise TypeError("All elements in list must be integer or float")
                 if len(args[0]) < (len(self._coefficients) - 1):
                     inputs = [0 for _ in range(len(self._coefficients) - len(args[0]) - 1)]
                     inputs.extend(args[0])
                 else:
-                    inputs = args[0]
+                    inputs = args[0][len(args[0]) - len(self._coefficients) + 1 :]
             else:
                 raise TypeError("Argument must be integer or float number or list of those")
         else:
-            if len(args) > (len(self._coefficients) - 1):
-                raise ValueError(f"Must pass {len(self._coefficients) - 1} inputs to function")
             if not all(isinstance(num, int) or isinstance(num, float) for num in args):
                 raise TypeError("All arguments must be integer or float")
             if len(args) < (len(self._coefficients) - 1):
                 inputs = [0 for _ in range(len(self._coefficients) - len(args) - 1)]
                 inputs.extend(args)
             else:
-                inputs = list(args)
+                inputs = list(args)[len(args[0]) - len(self._coefficients) + 1 :]
 
         inputs.append(1)
         return inputs

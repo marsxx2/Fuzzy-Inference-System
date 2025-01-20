@@ -68,7 +68,6 @@ trainer = wang_mendel.trainer.Trainer(
 
 fuzzy_system.rulebase = trainer.train()
 
-print('Fuzzy Inferece System MSE'.ljust(50, '='))
 fis_mse = report.MeanSquareError(fuzzy_system)
 fis_mse.test_tables = train_data
 mse_mean, mse_std = fis_mse()
@@ -94,64 +93,6 @@ fis_mse.test_tables = test_data
 mse_mean, mse_std = fis_mse()
 print(f"Mean Square Error for test data: {mse_mean / 2:.4f} ± {mse_std / 2:.3f}")
 
-#Presentation
-set_names = ['INPUT SET 1', 'INPUT SET 2', 'OUTPUT SET']
-inputs=[np.linspace(-7, 7, 1000), np.linspace(-7, 7, 1000), np.linspace(-10, 60, 1000)]
-outputs=[np.array([dis(x) for x in input]).T for dis, input in zip(fuzzy_system.input_domain, inputs)]
-outputs.append(np.array([fuzzy_system.defuzzifier.output_discourse(x) for x in inputs[2]]).T)
-
-for input, output, name in zip(inputs, outputs, set_names):
-    plt.figure(figsize=(8,5))
-    for mfout in output:
-        plt.plot(input, mfout)
-    plt.title(name)
-
-rows_Columns_text = [str(i) for i in range(1, 8)]
-data = np.empty((7, 7), dtype = np.int32)
-for rule in fuzzy_system.rulebase:
-        data[
-             rule[0].antecedent[0]
-        ][
-             rule[0].antecedent[1]
-        ] = fuzzy_system.defuzzifier.output_discourse[
-             rule[0].consequent()
-        ].centroid
-df = pd.DataFrame(
-    data, 
-    index = rows_Columns_text, 
-    columns = rows_Columns_text
-)
-
-plt.figure(figsize = (5, 5))  
-plt.imshow(df, cmap = 'coolwarm', aspect = 'auto') 
-
-for i in range(df.shape[0]):  
-    for j in range(df.shape[1]):  
-        plt.text(j, i, str(df.iloc[i, j]), ha = 'center', va = 'center')
-
-plt.xticks(ticks = np.arange(7), labels = rows_Columns_text, ha = 'right')
-plt.yticks(ticks = np.arange(7), labels = rows_Columns_text)
-
-plt.title("RuleBase Centroids")
-plt.xlabel("INPUT SET 2")
-plt.ylabel("INPUT SET 1")
-
-plt.tight_layout()
-
-fig = plt.figure(figsize=(10, 10))
-
-X1, X2 = np.meshgrid(input_range, input_range)
-
-Z = X1 ** 2 + X2 ** 2
-ax = fig.add_subplot(1, 2, 1, projection='3d')
-ax.plot_wireframe(X1, X2, Z, rstride=1, cstride=1, alpha=0.5)
-ax.set_title('Desired Result')
-
-ZP = np.array([[fuzzy_system([x1, x2]) for x1 in input_range] for x2 in input_range])
-axp = fig.add_subplot(1, 2, 2, projection='3d')
-axp.plot_wireframe(X1, X2, ZP, rstride=1, cstride=1, alpha=0.5)
-axp.set_title('Fuzzy Result')
-
 anfis_sys = anfis.ANFIS(
      input_domain= fuzzy_system.input_domain,
      antecedents= [
@@ -176,61 +117,63 @@ train_mses, test_mses = anfis.train(
      test_tables= test_data[:10]
 )
 
-print('ANFIS MSE'.ljust(50, '='))
-anfis_mse = report.MeanSquareError(anfis_sys)
-anfis_mse.test_tables = train_data
-mse_mean, mse_std = anfis_mse()
-print(f"Mean Square Error for train data: {mse_mean / 2:.4f}")
-
-anfis_mse.test_tables = test_data
-mse_mean, mse_std = anfis_mse()
-print(f"Mean Square Error for test data: {mse_mean / 2:.4f} ± {mse_std / 2:.3f}")
-
 #Presentation
-plt.figure(figsize=(8, 5))
-plt.plot(train_mses, label='Train Data')
-plt.plot(test_mses, label='Test Data')
-plt.title('Train and Test Data MSE')
-plt.xlabel("Epochs")
-plt.ylabel("Mean Square Error")
-plt.legend(loc='upper right')
+set_names = ['INPUT SET 1', 'INPUT SET 2', 'OUTPUT SET']
+inputs=[np.linspace(-7, 7, 1000), np.linspace(-7, 7, 1000), np.linspace(-10, 60, 1000)]
+outputs=[np.array([dis(x) for x in input]).T for dis, input in zip(fuzzy_system.input_domain, inputs)]
+outputs.append(np.array([fuzzy_system.defuzzifier.output_discourse(x) for x in inputs[2]]).T)
 
-data = np.empty((7, 7), dtype = np.int32)
-for antc, cons in zip(anfis_sys.antecedents, anfis_sys.consequents):
-        data[
-             antc[0]
-        ][
-             antc[1]
-        ] = cons()
-df = pd.DataFrame(
-    data, 
-    index = rows_Columns_text, 
-    columns = rows_Columns_text
-)
+for input, output, name in zip(inputs, outputs, set_names):
+    plt.figure(figsize=(8,5))
+    for mfout in output:
+        plt.plot(input, mfout)
+    plt.title(name)
 
-plt.figure(figsize = (5, 5))  
-plt.imshow(df, cmap = 'coolwarm', aspect = 'auto') 
+def display_rulebase(rulebase: rules.RuleBase):
+    rows_Columns_text = [str(i) for i in range(1, 8)]
+    data = np.empty((7, 7), dtype = np.int32)
+    for rule in rulebase:
+            data[
+                 rule[0].antecedent[0]
+            ][
+                 rule[0].antecedent[1]
+            ] = fuzzy_system.defuzzifier.output_discourse[
+                 rule[0].consequent()
+            ].centroid
+    df = pd.DataFrame(
+        data, 
+        index = rows_Columns_text, 
+        columns = rows_Columns_text
+    )
+    
+    plt.figure(figsize = (5, 5))  
+    plt.imshow(df, cmap = 'coolwarm', aspect = 'auto') 
 
-for i in range(df.shape[0]):  
-    for j in range(df.shape[1]):  
-        plt.text(j, i, str(df.iloc[i, j]), ha = 'center', va = 'center')
+    for i in range(df.shape[0]):  
+        for j in range(df.shape[1]):  
+            plt.text(j, i, str(df.iloc[i, j]), ha = 'center', va = 'center')
+    
+    plt.xticks(ticks = np.arange(7), labels = rows_Columns_text, ha = 'right')
+    plt.yticks(ticks = np.arange(7), labels = rows_Columns_text)
+    
+    plt.title("Rule Table")
+    plt.xlabel("Input Set 2")
+    plt.ylabel("Input Set 1")
+    
+    plt.tight_layout()
 
-plt.xticks(ticks = np.arange(7), labels = rows_Columns_text, ha = 'right')
-plt.yticks(ticks = np.arange(7), labels = rows_Columns_text)
-
-plt.title("Consequences Table")
-plt.xlabel("INPUT SET 2")
-plt.ylabel("INPUT SET 1")
-
-plt.tight_layout()
+display_rulebase(fuzzy_system.rulebase)
 
 fig = plt.figure(figsize=(10, 10))
 
+X1, X2 = np.meshgrid(input_range, input_range)
+
+Z = X1 ** 2 + X2 ** 2
 ax = fig.add_subplot(1, 2, 1, projection='3d')
 ax.plot_wireframe(X1, X2, Z, rstride=1, cstride=1, alpha=0.5)
 ax.set_title('Desired Result')
 
-ZP = np.array([[anfis_sys([x1, x2]) for x1 in input_range] for x2 in input_range])
+ZP = np.array([[fuzzy_system([x1, x2]) for x1 in input_range] for x2 in input_range])
 axp = fig.add_subplot(1, 2, 2, projection='3d')
 axp.plot_wireframe(X1, X2, ZP, rstride=1, cstride=1, alpha=0.5)
 axp.set_title('Fuzzy Result')
