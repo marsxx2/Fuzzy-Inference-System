@@ -10,23 +10,21 @@ class InferenceSystem:
     _aggregator: Aggregator
     _defuzzifier: Defuzzifier
 
-    def __init__(self, **kwargs):
-        if 'input_domain' in kwargs:
-            if not isinstance(kwargs['input_domain'], Domain):
-                raise TypeError("'input_domain' must be Domain class")
-            self._input_domain = kwargs['input_domain']
-        if 'rulebase' in kwargs:
-            if not isinstance(kwargs['rulebase'], RuleBase):
-                raise TypeError("'rulebase' must be RuleBase class")
-            self._rulebase = kwargs['rulebase']
-        if 'aggregator' in kwargs:
-            if not isinstance(kwargs['aggregator'], Aggregator):
-                raise TypeError("'aggregator' must be Aggregator class")
-            self._aggregator = kwargs['aggregator']
-        if 'defuzzifier' in kwargs:
-            if not isinstance(kwargs['defuzzifier'], Defuzzifier):
-                raise TypeError("'defuzzifier' must be Defuzzifier class")
-            self._defuzzifier = kwargs['defuzzifier']
+    def __init__(
+            self,
+            input_domain = None,
+            rulebase = None,
+            aggregator = None,
+            defuzzifier = None
+    ):
+            if input_domain:
+                self.input_domain = input_domain
+            if rulebase:
+                self.rulebase = rulebase
+            if aggregator:
+                self.aggregator = aggregator
+            if defuzzifier:
+                self.defuzzifier = defuzzifier
 
     @property
     def input_domain(self):

@@ -2,14 +2,13 @@
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+from fuzzy.datatype import DataTable
 import fuzzy.input_space.memberfuncs as mfs
 from fuzzy.input_space import discourse
-from fuzzy.inference import rules
-from fuzzy.inference import antecedent
-from fuzzy.inference import aggregator
-from fuzzy.inference import defuzzification
+from fuzzy.inference import rules, antecedent, consequent, aggregator, defuzzification
 from fuzzy.system.inferece_system import InferenceSystem
-from fuzzy.datatype import DataTable
+from fuzzy.system import anfis
+from fuzzy.utilies import report
 import wang_mendel.trainer
 
 
@@ -64,11 +63,61 @@ trainer = wang_mendel.trainer.Trainer(
     input_domain = fuzzy_system.input_domain,
     output_discourse = fuzzy_system.defuzzifier.output_discourse,
     train_table = train_data,
-    antecedent = antecedent.Product
+    antecedent_type = antecedent.Product
 )
 
 fuzzy_system.rulebase = trainer.train()
 
+fis_mse = report.MeanSquareError(fuzzy_system)
+fis_mse.test_tables = train_data
+mse_mean, mse_std = fis_mse()
+print(f"Mean Square Error for train data: {mse_mean / 2:.4f}")
+
+test_inputs = [
+     np.random.uniform(-5, 5, size=(169, 2)).tolist()
+     for _ in range(100)
+]
+
+test_data = [
+     DataTable(
+          inputs= inpts,
+          output= [
+               x1 ** 2 + x2 ** 2
+               for x1, x2 in inpts
+          ]
+     )
+     for inpts in test_inputs
+]
+
+fis_mse.test_tables = test_data
+mse_mean, mse_std = fis_mse()
+print(f"Mean Square Error for test data: {mse_mean / 2:.4f} ± {mse_std / 2:.3f}")
+
+anfis_sys = anfis.ANFIS(
+     input_domain= fuzzy_system.input_domain,
+     antecedents= [
+          rule[0].antecedent 
+          for rule in fuzzy_system.rulebase
+     ],
+     consequents= [
+          consequent.Sugeno(
+               fuzzy_system.defuzzifier.output_discourse[
+                    rule[0].consequent()
+                ].centroid
+          )
+          for rule in fuzzy_system.rulebase
+     ]
+)
+
+train_mses, test_mses = anfis.train(
+     anfis_system= anfis_sys,
+     eta= 0.01,
+     epochs_no= 25,
+     train_table= train_data,
+     test_tables= test_data[:10]
+)
+
+#Presentation
 set_names = ['INPUT SET 1', 'INPUT SET 2', 'OUTPUT SET']
 inputs=[np.linspace(-7, 7, 1000), np.linspace(-7, 7, 1000), np.linspace(-10, 60, 1000)]
 outputs=[np.array([dis(x) for x in input]).T for dis, input in zip(fuzzy_system.input_domain, inputs)]

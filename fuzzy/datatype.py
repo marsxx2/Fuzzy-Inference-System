@@ -91,6 +91,9 @@ class DataTable:
         else:
             self._output = []
 
+    def __len__(self):
+        return min(len(self._inputs), len(self._output))
+
     def __getitem__(self, index):
         return self._inputs[index], self._output[index]
     

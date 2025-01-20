@@ -10,15 +10,21 @@ class Trainer:
     _output_discourse: Discourse
     _train_table: DataTable
 
-    def __init__(self, **kwargs):
-        if 'input_domain' in kwargs:
-            self.input_domain = kwargs['input_domain']
-        if 'output_discourse' in kwargs:
-            self.output_discourse = kwargs['output_discourse']
-        if 'train_table' in kwargs:
-            self.train_table = kwargs['train_table']
-        if 'antecedent' in kwargs:
-            self.antecedent = kwargs['antecedent']
+    def __init__(
+            self,
+            input_domain = None,
+            output_discourse = None,
+            train_table = None,
+            antecedent_type = None
+    ):
+        if input_domain:
+            self.input_domain = input_domain
+        if output_discourse:
+            self.output_discourse = output_discourse
+        if train_table:
+            self.train_table = train_table
+        if antecedent_type:
+            self.antecedent_type = antecedent_type
         else:
             self._antecedent = Min
 
@@ -53,11 +59,11 @@ class Trainer:
         self._train_table = value
 
     @property
-    def antecedent(self):
+    def antecedent_type(self):
         return self._antecedent
     
-    @antecedent.setter
-    def antecedent(self, value):
+    @antecedent_type.setter
+    def antecedent_type(self, value):
         if not isinstance(value, type(Antecedent)):
             raise TypeError("'antecedent' must be Antecedent class")
         self._antecedent = value

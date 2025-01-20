@@ -42,12 +42,12 @@ class Discourse:
         return len(self._member_functions)
 
     def __call__(self, value: float) -> list[grade]:
-        # return [mf(value) for mf in self._member_functions]
-        with ThreadPoolExecutor() as executor:
-            futures=[executor.submit(mf, value) for mf in self._member_functions]
-            results=[future.result() for future in futures]
+        return [mf(value) for mf in self._member_functions]
+        # with ThreadPoolExecutor() as executor:
+        #     futures=[executor.submit(mf, value) for mf in self._member_functions]
+        #     results=[future.result() for future in futures]
 
-        return list(results)
+        # return list(results)
     
     def __getitem__(self, index):
         return self._member_functions[index]
@@ -138,12 +138,12 @@ class Domain:
                 raise ValueError(f"You must pass {len(self)} futures to domain but you passed {len(args)} futures")
             futures=list(args)
 
-        # return [dis(value) for dis, value in zip(self._discourses, futures)]
-        with ThreadPoolExecutor() as executor:
-            futures=[executor.submit(dis, value) for dis, value in zip(self._discourses, futures)]
-            results=[future.result() for future in futures]
+        return [dis(value) for dis, value in zip(self._discourses, futures)]
+        # with ThreadPoolExecutor() as executor:
+        #     futures=[executor.submit(dis, value) for dis, value in zip(self._discourses, futures)]
+        #     results=[future.result() for future in futures]
         
-        return results
+        # return results
     
     def __getitem__(self, index):
         return self._discourses[index]
