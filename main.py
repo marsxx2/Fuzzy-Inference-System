@@ -107,7 +107,7 @@ for input, output, name in zip(inputs, outputs, set_names):
     plt.title(name)
 
 rows_Columns_text = [str(i) for i in range(1, 8)]
-data = np.empty((7, 7), dtype = np.int32)
+data = np.empty((7, 7), dtype = np.float32)
 for rule in fuzzy_system.rulebase:
         data[
              rule[0].antecedent[0]
@@ -127,7 +127,7 @@ plt.imshow(df, cmap = 'coolwarm', aspect = 'auto')
 
 for i in range(df.shape[0]):  
     for j in range(df.shape[1]):  
-        plt.text(j, i, str(df.iloc[i, j]), ha = 'center', va = 'center')
+        plt.text(j, i, f'{df.iloc[i, j]:.1f}', ha = 'center', va = 'center')
 
 plt.xticks(ticks = np.arange(7), labels = rows_Columns_text, ha = 'right')
 plt.yticks(ticks = np.arange(7), labels = rows_Columns_text)
@@ -195,7 +195,7 @@ plt.xlabel("Epochs")
 plt.ylabel("Mean Square Error")
 plt.legend(loc='upper right')
 
-data = np.empty((7, 7), dtype = np.int32)
+data = np.empty((7, 7), dtype = np.float32)
 for antc, cons in zip(anfis_sys.antecedents, anfis_sys.consequents):
         data[
              antc[0]
@@ -213,7 +213,7 @@ plt.imshow(df, cmap = 'coolwarm', aspect = 'auto')
 
 for i in range(df.shape[0]):  
     for j in range(df.shape[1]):  
-        plt.text(j, i, str(df.iloc[i, j]), ha = 'center', va = 'center')
+        plt.text(j, i, f'{df.iloc[i, j]:.1f}', ha = 'center', va = 'center')
 
 plt.xticks(ticks = np.arange(7), labels = rows_Columns_text, ha = 'right')
 plt.yticks(ticks = np.arange(7), labels = rows_Columns_text)
